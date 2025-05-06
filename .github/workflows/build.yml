@@ -18,7 +18,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Required for SonarQube to properly analyze the code
+          fetch-depth: 1  # Required for SonarQube to properly analyze the code
 
       - name: Install SonarQube Scanner
         uses: sonarsource/sonarqube-scan-action@v4.1.0
@@ -26,6 +26,6 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         with:
-        args: >
-          -X
-          -Dsonar.verbose=true
+          args: >
+            -X
+            -Dsonar.verbose=true

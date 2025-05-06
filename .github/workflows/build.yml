@@ -1,35 +1,35 @@
-name: Build and SonarQube Analysis
+name: SonarQube Go Analysis
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
-  sonarqube-analysis:
-    name: SonarQube Analysis
+  sonarqube-scan:
+    name: SonarQube Scan (Go)
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      security-events: write  # Required for SonarQube to report security issues
+      security-events: write
     
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Required to get full commit history for SonarQube analysis
+          fetch-depth: 0  # Required for SonarQube to properly analyze the code
 
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: SonarQube Scan
+      - name: Install SonarQube Scanner
         uses: sonarsource/sonarqube-scan-action@v4.1.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          args: >
+            -Dsonar.projectKey=your-project-key
+            -Dsonar.projectName="Your Go Project"
+            -Dsonar.sources=.
+            -Dsonar.go.coverage.reportPaths=coverage.out
+            -Dsonar.go.tests.reportPaths=test-report.xml
+            -Dsonar.language=go

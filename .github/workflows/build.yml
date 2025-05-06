@@ -13,12 +13,22 @@ jobs:
     permissions:
       contents: read
       security-events: write
+      packages: read
+      actions: read
     
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1  # Required for SonarQube to properly analyze the code
+          fetch-depth: 1
+
+      # Add cache action explicitly
+      - name: Cache SonarQube packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
 
       - name: Install SonarQube Scanner
         uses: sonarsource/sonarqube-scan-action@v4.1.0
@@ -29,3 +39,5 @@ jobs:
           args: >
             -X
             -Dsonar.verbose=true
+            -Dsonar.go.coverage.reportPaths=coverage.out
+            -Dsonar.language=go
